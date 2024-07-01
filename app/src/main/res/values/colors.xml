@@ -11,5 +11,6 @@
     <color name="bg">#EAEEF0</color>
     <color name="foodpanda">#E91D74</color>
     <color name="light_text">#737373</color>
+    <color name="light_text_ripple">#A0A0A0</color>
     <color name="light_text2">#33737373</color>
 </resources>

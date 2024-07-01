@@ -1,8 +1,13 @@
 package com.food.foodpanda.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -39,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +68,7 @@ import com.food.foodpanda.data.model.CardItem
 import com.food.foodpanda.data.model.RestuarantItem
 import com.food.foodpanda.ui.viewmodel.MainScreenViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     onVaultClick: (String) -> Unit,
@@ -71,12 +79,74 @@ fun MainScreen(
 
     Column(
         modifier = Modifier
-            .verticalScroll(state = scrollState)
             .background(color = colorResource(id = R.color.bg))
     ) {
-        TopBar()
-        UpperBox()
-        WhiteArea()
+        TopAddressBar()
+        CompositionLocalProvider(
+            LocalOverscrollConfiguration provides null
+        ) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(state = scrollState)
+            ) {
+                TopBar()
+                UpperBox()
+                WhiteArea()
+            }
+        }
+
+    }
+
+}
+
+@Composable
+fun TopAddressBar(){
+
+    Row(
+        modifier = Modifier.background(
+            color = colorResource(id = R.color.foodpanda)
+        )
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        ,
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_menu),
+            contentDescription = "Contact profile picture",
+            modifier = Modifier
+                .size(22.dp)
+        )
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = "Home",
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.white),
+                fontSize = 18.sp,
+            )
+            Text(
+                text = "House# 56, Eden Avenue, Washington DC, America",
+                fontWeight = FontWeight.Normal,
+                color = colorResource(id = R.color.white),
+                fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Image(
+            painter = painterResource(R.drawable.ic_heart_unfilled),
+            contentDescription = "Contact profile picture",
+            modifier = Modifier
+                .size(22.dp)
+        )
+        Image(
+            painter = painterResource(R.drawable.shopping_bag),
+            contentDescription = "Contact profile picture",
+            modifier = Modifier
+                .size(22.dp)
+        )
     }
 
 }
@@ -95,48 +165,6 @@ fun TopBar() {
             .background(color = colorResource(id = R.color.foodpanda))
             .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
-        Row(
-
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_menu),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(22.dp)
-            )
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = "Home",
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.white),
-                    fontSize = 18.sp,
-                )
-                Text(
-                    text = "House# 56, Eden Avenue, Washington DC, America",
-                    fontWeight = FontWeight.Normal,
-                    color = colorResource(id = R.color.white),
-                    fontSize = 13.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            Image(
-                painter = painterResource(R.drawable.ic_heart_unfilled),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(22.dp)
-            )
-            Image(
-                painter = painterResource(R.drawable.shopping_bag),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(22.dp)
-            )
-        }
         TextField(
             value = text,
             onValueChange = {
@@ -264,44 +292,71 @@ fun CardItem(
     cardItem: CardItem,
 ){
 
-    Box(
-        modifier = modifier
-            .background(
-                shape = RoundedCornerShape(10.dp),
-                color = colorResource(id = R.color.white)
-            )
+    Card(
+        colors = CardColors(
+            contentColor = Color.Transparent,
+            containerColor = Color.White,
+            disabledContentColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(10.dp),
+        //backgroundColor = Color.White,
+        modifier = Modifier
             .fillMaxWidth()
+            //.padding(10.dp)
             .wrapContentHeight()
-            .padding(10.dp),
     ) {
-        Column(
+        Box(
             modifier = modifier
-                .align(Alignment.TopStart)
+               /* .background(
+                    shape = RoundedCornerShape(10.dp),
+                    color = colorResource(id = R.color.white)
+                )*/
+                .fillMaxWidth()
+                .wrapContentHeight()
+                //.padding(10.dp)
+                .clickable(
+                    /*indication = rememberRipple(
+                        bounded = false,
+                        radius = 10.dp,
+                        color = colorResource(id = R.color.light_text_ripple)
+                    ),
+                    interactionSource = remember { MutableInteractionSource() }*/
+                ) {
+                    //navController.popBackStack()
+                }
+                .padding(10.dp)
         ) {
-            Text(
-                text = cardItem.title,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.black),
-                fontSize = 16.sp
-            )
-            Text(
-                text = cardItem.desc,
-                fontWeight = FontWeight.Normal,
-                color = colorResource(id = R.color.black),
-                fontSize = 13.sp,
-                modifier = descModifier,
-                lineHeight = 14.sp
+            Column(
+                modifier = modifier
+                    .align(Alignment.TopStart)
+            ) {
+                Text(
+                    text = cardItem.title,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.black),
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = cardItem.desc,
+                    fontWeight = FontWeight.Normal,
+                    color = colorResource(id = R.color.black),
+                    fontSize = 13.sp,
+                    modifier = descModifier,
+                    lineHeight = 14.sp
+                )
+            }
+            // Spacer(modifier = Modifier.align(Alignment.Center))
+            Image(
+                painter = cardItem.image,
+                contentDescription = "Contact profile picture",
+                modifier = imageModifier
+                    .align(Alignment.BottomEnd)
+                //.background(color = Color.Blue)
             )
         }
-       // Spacer(modifier = Modifier.align(Alignment.Center))
-        Image(
-            painter = cardItem.image,
-            contentDescription = "Contact profile picture",
-            modifier = imageModifier
-                .align(Alignment.BottomEnd)
-                //.background(color = Color.Blue)
-        )
     }
+
 
 }
 
@@ -325,7 +380,34 @@ fun WhiteArea(){
                 .padding(top = 20.dp)
         )
         OrderItAgain()
-
+        Text(
+            text = "Top Brands",
+            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.black),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .padding(top = 20.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TopBrands(
+                R.drawable.texas_logo,
+                "Texas Chicken",
+                "30 mins"
+            )
+            TopBrands(
+                R.drawable.papa_johns,
+                "Papa Johns",
+                "30 mins"
+            )
+            TopBrands(
+                R.drawable.baskin_robbins_logo,
+                "Baskin Robbins",
+                "26 mins"
+            )
+        }
     }
 
 }
@@ -522,7 +604,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth()
-              // .background(color = Color.Red)
+                // .background(color = Color.Red)
                 .width(270.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -575,7 +657,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                 //.background(color = Color.Blue)
+                //.background(color = Color.Blue)
                 .width(270.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -629,5 +711,57 @@ fun OfferLayout(text: String){
         fontSize = 10.sp,
         fontWeight = FontWeight.Bold,
     )
+
+}
+
+@Composable
+fun TopBrands(
+    logo: Int,
+    title:String,
+    distance:String
+){
+
+
+    Column(
+        modifier = Modifier
+            .padding(top = 15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier,
+            colors = CardColors(
+                containerColor = colorResource(id = R.color.bg),
+                contentColor = Color.Transparent,
+                disabledContentColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
+            )
+        ) {
+            Image(
+                painter = painterResource(id = logo),
+                contentDescription = "Contact profile picture",
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(100.dp)
+                    .padding(10.dp)
+            )
+        }
+        Text(
+            modifier = Modifier
+                .padding(top = 5.dp),
+            text = title,
+            color = Color.Black,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+        )
+        Text(
+            modifier = Modifier,
+            text = distance,
+            color = colorResource(id = R.color.light_text),
+            fontSize = 12.sp,
+            lineHeight = 2.sp,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+
 
 }

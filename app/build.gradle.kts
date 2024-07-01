@@ -68,4 +68,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
 
 
+    implementation("com.github.skydoves:landscapist-glide:2.3.3")
+    implementation("com.github.skydoves:landscapist-placeholder:2.3.3")
+
+
 }
