@@ -1,6 +1,5 @@
 package com.food.foodpanda.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -24,14 +23,15 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
@@ -40,9 +40,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -52,16 +52,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.CardItem
@@ -71,17 +73,22 @@ import com.food.foodpanda.ui.viewmodel.MainScreenViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    onVaultClick: (String) -> Unit,
+    onclick: () -> Unit,
     viewModel: MainScreenViewModel = viewModel()
 ) {
 
     val scrollState = rememberScrollState()
 
+    val upperBoxData = viewModel.getUpperBoxData()
+    val restaurantsData = viewModel.getRestaurantsData()
+    val cuisineData = viewModel.getCuisineData()
+
     Column(
         modifier = Modifier
-            .background(color = colorResource(id = R.color.bg))
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.bg)),
     ) {
-        TopAddressBar()
+        TopAddressBar(onclick)
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null
         ) {
@@ -89,9 +96,9 @@ fun MainScreen(
                 modifier = Modifier
                     .verticalScroll(state = scrollState)
             ) {
-                TopBar()
-                UpperBox()
-                WhiteArea()
+                TopSearchBar()
+                UpperBox(upperBoxData)
+                WhiteArea(restaurantsData, cuisineData)
             }
         }
 
@@ -100,13 +107,16 @@ fun MainScreen(
 }
 
 @Composable
-fun TopAddressBar(){
+fun TopAddressBar(
+    onclick: () -> Unit,
+) {
 
     Row(
-        modifier = Modifier.background(
-            color = colorResource(id = R.color.foodpanda)
-        )
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        modifier = Modifier
+            .background(
+                color = colorResource(id = R.color.foodpanda)
+            )
+            .padding(start = 16.dp, end = 16.dp, top = 12.dp)
         ,
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -115,6 +125,16 @@ fun TopAddressBar(){
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = "Contact profile picture",
             modifier = Modifier
+                .clickable(
+                    indication = rememberRipple(
+                        bounded = false,
+                        color = colorResource(id = R.color.black)
+                    ),
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    onclick.invoke()
+                }
+                .padding(4.dp)
                 .size(22.dp)
         )
         Column(
@@ -132,7 +152,8 @@ fun TopAddressBar(){
                 color = colorResource(id = R.color.white),
                 fontSize = 13.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 3.sp
             )
         }
         Image(
@@ -153,19 +174,18 @@ fun TopAddressBar(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopSearchBar() {
 
     var text by remember { mutableStateOf("") }
-
 
     Column(
         modifier = Modifier
             //.padding(horizontal = 16.dp)
             .fillMaxWidth()
             .background(color = colorResource(id = R.color.foodpanda))
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(start = 16.dp, end = 10.dp, top = 10.dp, bottom = 14.dp),
     ) {
-        TextField(
+        /*TextField(
             value = text,
             onValueChange = {
                 text = it
@@ -199,7 +219,86 @@ fun TopBar() {
                     )
                 }
             }
-        )
+        )*/
+        BasicTextField(
+            value = text,
+            onValueChange = { text = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    shape = RoundedCornerShape(50.dp),
+                    color = Color.White
+                )
+                .height(40.dp),
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
+            singleLine = false,
+            interactionSource = remember { MutableInteractionSource() },
+        ) { innerTextField ->
+            Row(
+                Modifier
+                    .padding(start = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // if (leadingIcon != null) leadingIcon()
+                Icon(
+                    Icons.Filled.Search, "contentDescription",
+                    modifier = Modifier
+                       // .background(color = Color.Red)
+                        )
+                Box(
+                    Modifier.fillMaxWidth()
+                        //.background(color = Color.Blue)
+                        .padding(start = 10.dp,end = 10.dp)
+                ) {
+                    innerTextField()
+                    if (text.isEmpty()) Text(
+                        "Search for shops and restuarants",
+                        style = LocalTextStyle.current.copy(
+                            color = colorResource(id = R.color.light_text),
+                            fontSize = 12.sp
+                        )
+                    )
+                }
+                //if (trailingIcon != null) trailingIcon()
+            }
+            /*TextFieldDefaults.TextFieldDecorationBox(
+                value = text,
+                innerTextField = innerTextField,
+                enabled = true,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = remember { MutableInteractionSource() },
+                *//*leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search, "contentDescription",
+                        modifier = Modifier.clickable { *//**//* doSomething *//**//* }
+                    )
+                },*//*
+                contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+                    top = 0.dp,
+                    bottom = 0.dp
+                ),
+                container = {
+                    Row(
+                        Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                       // if (leadingIcon != null) leadingIcon()
+                        Box(Modifier.weight(1f)) {
+                            if (text.isEmpty()) Text(
+                                "placeholderText",
+                                style = LocalTextStyle.current.copy(
+                                    color = colorResource(id = R.color.light_text),
+                                    fontSize = 12.sp
+                                )
+                            )
+                            innerTextField()
+                        }
+                        //if (trailingIcon != null) trailingIcon()
+                    }
+                }
+            )*/
+        }
     }
 
 
@@ -207,20 +306,8 @@ fun TopBar() {
 
 @Composable
 fun UpperBox(
+    list: ArrayList<CardItem>
 ){
-
-    val cardItem1 = CardItem("Food delivery","Order food you love",painterResource(R.drawable.order_food))
-    val cardItem2 = CardItem("Pandamart","Essentials delivered fast",painterResource(R.drawable.pandamart))
-    val cardItem4 = CardItem("Shops","Top brands to your door",painterResource(R.drawable.shop))
-    val cardItem5 = CardItem("Pandago","Send parcels in a tap",painterResource(R.drawable.order_food))
-    val cardItem3 = CardItem("pick-up","Self collect for 50% off",painterResource(R.drawable.order_food))
-
-    val list = ArrayList<CardItem>()
-    list.add(cardItem1)
-    list.add(cardItem2)
-    list.add(cardItem4)
-    list.add(cardItem5)
-    list.add(cardItem3)
 
     var counter = 0
 
@@ -308,7 +395,7 @@ fun CardItem(
     ) {
         Box(
             modifier = modifier
-               /* .background(
+                /* .background(
                     shape = RoundedCornerShape(10.dp),
                     color = colorResource(id = R.color.white)
                 )*/
@@ -348,7 +435,7 @@ fun CardItem(
             }
             // Spacer(modifier = Modifier.align(Alignment.Center))
             Image(
-                painter = cardItem.image,
+                painter = painterResource(id = cardItem.image),
                 contentDescription = "Contact profile picture",
                 modifier = imageModifier
                     .align(Alignment.BottomEnd)
@@ -361,7 +448,10 @@ fun CardItem(
 }
 
 @Composable
-fun WhiteArea(){
+fun WhiteArea(
+    restaurantsData: ArrayList<RestuarantItem>,
+    cardItemData: ArrayList<CardItem>,
+) {
 
     Column(
         modifier = Modifier
@@ -379,7 +469,7 @@ fun WhiteArea(){
             modifier = Modifier
                 .padding(top = 20.dp)
         )
-        OrderItAgain()
+        OrderItAgain(restaurantsData)
         Text(
             text = "Top Brands",
             fontWeight = FontWeight.Bold,
@@ -395,19 +485,37 @@ fun WhiteArea(){
             TopBrands(
                 R.drawable.texas_logo,
                 "Texas Chicken",
-                "30 mins"
+                Modifier
+                    .size(100.dp)
+                    .padding(10.dp),
+                "30 mins",
             )
             TopBrands(
                 R.drawable.papa_johns,
                 "Papa Johns",
+                Modifier
+                    .size(100.dp)
+                    .padding(10.dp),
                 "30 mins"
             )
             TopBrands(
                 R.drawable.baskin_robbins_logo,
                 "Baskin Robbins",
+                Modifier
+                    .size(100.dp)
+                    .padding(10.dp),
                 "26 mins"
             )
         }
+        Text(
+            text = "Cuisines",
+            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.black),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .padding(top = 30.dp)
+        )
+        Cuisines(data = cardItemData)
     }
 
 }
@@ -494,75 +602,15 @@ fun AdCard(){
 }
 
 @Composable
-fun OrderItAgain() {
-
-    val item1 =
-        RestuarantItem(
-            title = "Dogar Restuarant & Biryani",
-            offer = "Up to 20% off",
-            image = R.drawable.food_1,
-            rating = "4.6",
-            reviews = "500+",
-            minimumPricerOrder = "PKR 249 minimum",
-            cuisine = "Pakistani",
-            deliveryTime = "15-30 min",
-            deliveryPrice = "69 PKR"
-        )
-
-
-    val item2 =
-        RestuarantItem(
-            title = "Ice Land & Juice Corner",
-            offer = "Featured",
-            image = R.drawable.food_2,
-            rating = "4.9",
-            reviews = "500+",
-            minimumPricerOrder = "PKR 249 minimum",
-            cuisine = "Desserts",
-            deliveryTime = "15-30 min",
-            deliveryPrice = "199.0 PKR"
-        )
-
-
-    val item3 =
-        RestuarantItem(
-            title = "Karachi Hot N Spicy",
-            offer = "Up to 20% off",
-            image = R.drawable.food_3,
-            rating = "4.6",
-            reviews = "500+",
-            minimumPricerOrder = "PKR 249 minimum",
-            cuisine = "Continental",
-            deliveryTime = "15-30 min",
-            deliveryPrice = "99 PKR"
-        )
-
-
-    val item4 =
-        RestuarantItem(
-            title = "Swad - Bahria Town",
-            offer = "Up to 20% off",
-            image = R.drawable.food_4,
-            rating = "4.6",
-            reviews = "500+",
-            minimumPricerOrder = "PKR 249 minimum",
-            cuisine = "Pakistani",
-            deliveryTime = "15-30 min",
-            deliveryPrice = "69 PKR"
-        )
-
-
-    val list = ArrayList<RestuarantItem>()
-    list.add(item1)
-    list.add(item2)
-    list.add(item3)
-    list.add(item4)
+fun OrderItAgain(
+    list: ArrayList<RestuarantItem>
+) {
 
         LazyHorizontalGrid(
             rows = GridCells.Fixed(1),
             content = {
                 items(list) { item ->
-                    RestuarantsCardItem(item)
+                    RestaurantsCardItem(item)
                 }
             },
             modifier = Modifier
@@ -573,7 +621,7 @@ fun OrderItAgain() {
 }
 
 @Composable
-fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
+fun RestaurantsCardItem(restaurantItem: RestuarantItem) {
 
     Column(
         modifier = Modifier
@@ -590,7 +638,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
                 modifier = Modifier.align(Alignment.TopStart)
             ) {
                 Image(
-                    painter = painterResource(id = restuarantItem.image),
+                    painter = painterResource(id = restaurantItem.image),
                     contentDescription = "Contact profile picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -598,7 +646,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
                         .height(150.dp)
                 )
             }
-            OfferLayout(text = restuarantItem.offer)
+            OfferLayout(text = restaurantItem.offer)
         }
         Row(
             modifier = Modifier
@@ -610,7 +658,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = restuarantItem.title,
+                text = restaurantItem.title,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.black),
                 fontSize = 14.sp,
@@ -628,7 +676,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
 
             )
             Text(
-                text = restuarantItem.rating,
+                text = restaurantItem.rating,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.black),
                 fontSize = 12.sp,
@@ -637,7 +685,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
                    // .fillMaxWidth(.1f)
             )
             Text(
-                text = "(${restuarantItem.reviews})",
+                text = "(${restaurantItem.reviews})",
                 fontWeight = FontWeight.Normal,
                 color = colorResource(id = R.color.light_text),
                 fontSize = 12.sp,
@@ -647,7 +695,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
             )
         }
         Text(
-            text = "$$ ${restuarantItem.minimumPricerOrder} - ${restuarantItem.cuisine}",
+            text = "$$ ${restaurantItem.minimumPricerOrder} - ${restaurantItem.cuisine}",
             fontWeight = FontWeight.Normal,
             color = colorResource(id = R.color.light_text),
             fontSize = 12.sp,
@@ -669,7 +717,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
                     .size(16.dp),
                 )
             Text(
-                text = restuarantItem.deliveryTime,
+                text = restaurantItem.deliveryTime,
                 fontWeight = FontWeight.Normal,
                 color = colorResource(id = R.color.light_text),
                 lineHeight = 3.sp,
@@ -682,7 +730,7 @@ fun RestuarantsCardItem(restuarantItem: RestuarantItem) {
                     .size(16.dp),
             )
             Text(
-                text = restuarantItem.deliveryPrice,
+                text = restaurantItem.deliveryPrice,
                 fontWeight = FontWeight.Normal,
                 color = colorResource(id = R.color.light_text),
                 fontSize = 12.sp,
@@ -717,8 +765,11 @@ fun OfferLayout(text: String){
 @Composable
 fun TopBrands(
     logo: Int,
-    title:String,
-    distance:String
+    title: String,
+    modifier: Modifier,
+    distance: String = "",
+    contentScale: ContentScale = ContentScale.Fit,
+    cardContainerColor: Color = colorResource(id = R.color.bg),
 ){
 
 
@@ -730,7 +781,7 @@ fun TopBrands(
         Card(
             modifier = Modifier,
             colors = CardColors(
-                containerColor = colorResource(id = R.color.bg),
+                containerColor = cardContainerColor,
                 contentColor = Color.Transparent,
                 disabledContentColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent
@@ -739,10 +790,8 @@ fun TopBrands(
             Image(
                 painter = painterResource(id = logo),
                 contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .padding(10.dp)
+                contentScale = contentScale,
+                modifier = modifier
             )
         }
         Text(
@@ -753,7 +802,8 @@ fun TopBrands(
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
         )
-        Text(
+        if (distance.isNotEmpty())
+            Text(
             modifier = Modifier,
             text = distance,
             color = colorResource(id = R.color.light_text),
@@ -763,5 +813,30 @@ fun TopBrands(
         )
     }
 
+
+}
+
+@Composable
+fun Cuisines(
+    data: ArrayList<CardItem>
+) {
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        content = {
+            items(data) { item ->
+                TopBrands(
+                    item.image,
+                    item.title,
+                    Modifier.size(80.dp),
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+    )
 
 }

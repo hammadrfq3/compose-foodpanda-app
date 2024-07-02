@@ -71,5 +71,6 @@ dependencies {
     implementation("com.github.skydoves:landscapist-glide:2.3.3")
     implementation("com.github.skydoves:landscapist-placeholder:2.3.3")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
 }

@@ -1,8 +1,5 @@
 package com.food.foodpanda.data.model
 
-import android.graphics.drawable.Drawable
-import androidx.compose.ui.graphics.painter.Painter
-
 data class RestuarantItem(
     val title: String,
     val offer: String,
