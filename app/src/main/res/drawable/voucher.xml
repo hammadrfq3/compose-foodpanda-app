@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="20dp"
+    android:viewportHeight="17.55"
+    android:viewportWidth="12"
+    android:width="20dp">
+      
+    <path android:fillColor="#00000000" android:pathData="M11.5,15.785L11.5,1.775C11.5,1.136 10.788,0.755 10.256,1.109L8.987,1.956C8.697,2.149 8.315,2.132 8.043,1.915L6.5,0.68C6.208,0.446 5.792,0.446 5.5,0.68L3.957,1.915C3.685,2.132 3.303,2.149 3.013,1.956L1.744,1.109C1.212,0.755 0.5,1.136 0.5,1.775L0.5,15.785C0.5,16.424 1.212,16.805 1.744,16.451L3.013,15.604C3.303,15.411 3.685,15.428 3.957,15.645L5.5,16.88C5.792,17.114 6.208,17.114 6.5,16.88L8.043,15.645C8.315,15.428 8.697,15.411 8.987,15.604L10.256,16.451C10.788,16.805 11.5,16.424 11.5,15.785Z" android:strokeColor="@color/foodpanda" android:strokeWidth="1"/>
+      
+    <path android:fillColor="#00000000" android:pathData="M3.5,6.28L8.5,6.28" android:strokeColor="@color/foodpanda" android:strokeLineCap="round" android:strokeWidth="1"/>
+      
+    <path android:fillColor="#00000000" android:pathData="M3.5,8.78L8.5,8.78" android:strokeColor="@color/foodpanda" android:strokeLineCap="round" android:strokeWidth="1"/>
+      
+    <path android:fillColor="#00000000" android:pathData="M3.5,11.28L8.5,11.28" android:strokeColor="@color/foodpanda" android:strokeLineCap="round" android:strokeWidth="1"/>
+    
+</vector>
