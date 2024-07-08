@@ -65,14 +65,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.CardItem
 import com.food.foodpanda.data.model.RestuarantItem
+import com.food.foodpanda.ui.navigation.Screen
 import com.food.foodpanda.ui.viewmodel.MainScreenViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
+    navigateTo: (route: String) -> Unit,
     onclick: () -> Unit,
     viewModel: MainScreenViewModel = viewModel()
 ) {
@@ -98,7 +101,7 @@ fun MainScreen(
             ) {
                 TopSearchBar()
                 UpperBox(upperBoxData)
-                WhiteArea(restaurantsData, cuisineData)
+                WhiteArea(restaurantsData, cuisineData,navigateTo)
             }
         }
 
@@ -246,9 +249,10 @@ fun TopSearchBar() {
                        // .background(color = Color.Red)
                         )
                 Box(
-                    Modifier.fillMaxWidth()
+                    Modifier
+                        .fillMaxWidth()
                         //.background(color = Color.Blue)
-                        .padding(start = 10.dp,end = 10.dp)
+                        .padding(start = 10.dp, end = 10.dp)
                 ) {
                     innerTextField()
                     if (text.isEmpty()) Text(
@@ -451,6 +455,7 @@ fun CardItem(
 fun WhiteArea(
     restaurantsData: ArrayList<RestuarantItem>,
     cardItemData: ArrayList<CardItem>,
+    navigateTo: (route: String) -> Unit,
 ) {
 
     Column(
@@ -489,7 +494,7 @@ fun WhiteArea(
                     .size(100.dp)
                     .padding(10.dp),
                 "30 mins",
-            )
+            ){}
             TopBrands(
                 R.drawable.papa_johns,
                 "Papa Johns",
@@ -497,7 +502,7 @@ fun WhiteArea(
                     .size(100.dp)
                     .padding(10.dp),
                 "30 mins"
-            )
+            ){}
             TopBrands(
                 R.drawable.baskin_robbins_logo,
                 "Baskin Robbins",
@@ -505,7 +510,7 @@ fun WhiteArea(
                     .size(100.dp)
                     .padding(10.dp),
                 "26 mins"
-            )
+            ){}
         }
         Text(
             text = "Cuisines",
@@ -515,7 +520,7 @@ fun WhiteArea(
             modifier = Modifier
                 .padding(top = 30.dp)
         )
-        Cuisines(data = cardItemData)
+        Cuisines(data = cardItemData,navigateTo)
     }
 
 }
@@ -770,6 +775,7 @@ fun TopBrands(
     distance: String = "",
     contentScale: ContentScale = ContentScale.Fit,
     cardContainerColor: Color = colorResource(id = R.color.bg),
+    navigateTo: (route: String) -> Unit,
 ){
 
 
@@ -780,6 +786,7 @@ fun TopBrands(
     ) {
         Card(
             modifier = Modifier,
+            shape = RoundedCornerShape(10.dp),
             colors = CardColors(
                 containerColor = cardContainerColor,
                 contentColor = Color.Transparent,
@@ -792,6 +799,9 @@ fun TopBrands(
                 contentDescription = "Contact profile picture",
                 contentScale = contentScale,
                 modifier = modifier
+                    .clickable {
+                        navigateTo(Screen.CuisineScreen.route.plus("/$title"))
+                    }
             )
         }
         Text(
@@ -818,7 +828,8 @@ fun TopBrands(
 
 @Composable
 fun Cuisines(
-    data: ArrayList<CardItem>
+    data: ArrayList<CardItem>,
+    navigateTo: (route: String) -> Unit,
 ) {
 
     LazyHorizontalGrid(
@@ -831,7 +842,9 @@ fun Cuisines(
                     item.title,
                     Modifier.size(80.dp),
                     contentScale = ContentScale.Crop,
-                )
+                ){
+                    navigateTo.invoke(it)
+                }
             }
         },
         modifier = Modifier

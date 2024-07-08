@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -29,8 +30,10 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,11 +47,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.NavigationItems
+import com.food.foodpanda.ui.screens.CuisineScreen
 import com.food.foodpanda.ui.screens.MainScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -104,9 +110,11 @@ fun NavigationDrawer() {
     )
 
     val navController = rememberNavController()
-
+    val colors = MaterialTheme.colorScheme
     val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(color = colorResource(id = R.color.foodpanda))
+    var statusBarColor by remember { mutableStateOf(colors.primary) }
+
+   // systemUiController.setStatusBarColor(color = colorResource(id = R.color.foodpanda))
 
 
     //Remember Clicked index state
@@ -266,8 +274,36 @@ fun NavigationDrawer() {
             composable(Screen.MainScreen.route) {
                 MainScreen(onclick = {
                     scope.launch { drawerState.open() }
+                }, navigateTo = {
+                    navController.navigate(it)
                 })
+
+                LaunchedEffect(Unit) {
+                    statusBarColor = colors.primary
+                }
             }
+            composable(
+                Screen.CuisineScreen.route.plus("/{cuisine}"),
+                arguments = listOf(navArgument("cuisine") { type = NavType.StringType }
+                )) { b ->
+                b.arguments?.getString("cuisine").let { cuisine ->
+                    if (cuisine != null) {
+                        CuisineScreen(
+                            cuisine,
+                            onBackPress = {
+                            navController.navigateUp()
+                        })
+                    }
+                }
+
+                LaunchedEffect(Unit) {
+                    statusBarColor = colors.background
+                }
+            }
+        }
+
+        LaunchedEffect(statusBarColor) {
+            systemUiController.setStatusBarColor(statusBarColor)
         }
 
     }
