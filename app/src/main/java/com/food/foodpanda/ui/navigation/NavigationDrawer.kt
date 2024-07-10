@@ -1,6 +1,7 @@
 package com.food.foodpanda.ui.navigation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,9 +55,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.NavigationItems
+import com.food.foodpanda.data.model.RestaurantArgType
+import com.food.foodpanda.data.model.RestuarantItem
 import com.food.foodpanda.ui.screens.CuisineScreen
 import com.food.foodpanda.ui.screens.MainScreen
+import com.food.foodpanda.ui.screens.RestaurantScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -109,10 +114,7 @@ fun NavigationDrawer() {
         )
     )
 
-    val navController = rememberNavController()
-    val colors = MaterialTheme.colorScheme
-    val systemUiController = rememberSystemUiController()
-    var statusBarColor by remember { mutableStateOf(colors.primary) }
+
 
    // systemUiController.setStatusBarColor(color = colorResource(id = R.color.foodpanda))
 
@@ -268,13 +270,22 @@ fun NavigationDrawer() {
         },
         gesturesEnabled = true,
     ) {
+        val navController = rememberNavController()
+        val colors = MaterialTheme.colorScheme
+        val systemUiController = rememberSystemUiController()
+        var statusBarColor by remember { mutableStateOf(colors.primary) }
+
         NavHost(
             navController = navController, startDestination = Screen.MainScreen.route
         ) {
             composable(Screen.MainScreen.route) {
                 MainScreen(onclick = {
                     scope.launch { drawerState.open() }
-                }, navigateTo = {
+                }, navigateToRestaurant = {
+                    Log.e("TAG", "navigateToRestaurant: $it")
+                    navController.navigate(it)
+                }, navigateToCuisine = {
+                    Log.e("TAG", "navigateToCuisine: $it")
                     navController.navigate(it)
                 })
 
@@ -296,9 +307,27 @@ fun NavigationDrawer() {
                     }
                 }
 
-                LaunchedEffect(Unit) {
+                /*LaunchedEffect(Unit) {
                     statusBarColor = colors.background
+                }*/
+            }
+            composable(
+                Screen.RestaurantScreen.route.plus("/{restaurant}"),
+                arguments = listOf(navArgument("restaurant") { type = RestaurantArgType() }
+                    //arguments = listOf(navArgument("restaurant") { type = NavType.StringType }
+                )) { b ->
+                val arg = b.arguments?.getString("restaurant") ?: return@composable
+                val data = Gson().fromJson(arg, RestuarantItem::class.java)
+                if (data != null) {
+                    RestaurantScreen(
+                        data
+                    )
                 }
+
+
+                /*LaunchedEffect(Unit) {
+                    statusBarColor = colors.background
+                }*/
             }
         }
 

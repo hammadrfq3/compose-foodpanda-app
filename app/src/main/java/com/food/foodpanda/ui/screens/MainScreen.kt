@@ -1,5 +1,7 @@
 package com.food.foodpanda.ui.screens
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -31,19 +33,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -52,33 +50,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.CardItem
 import com.food.foodpanda.data.model.RestuarantItem
 import com.food.foodpanda.ui.navigation.Screen
 import com.food.foodpanda.ui.viewmodel.MainScreenViewModel
+import com.google.gson.Gson
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    navigateTo: (route: String) -> Unit,
+    navigateToCuisine: (route: String) -> Unit,
+    navigateToRestaurant: (route: String) -> Unit,
     onclick: () -> Unit,
     viewModel: MainScreenViewModel = viewModel()
 ) {
+    Log.e("TAG", "MainScreen")
+
 
     val scrollState = rememberScrollState()
 
@@ -101,7 +99,7 @@ fun MainScreen(
             ) {
                 TopSearchBar()
                 UpperBox(upperBoxData)
-                WhiteArea(restaurantsData, cuisineData,navigateTo)
+                WhiteArea(restaurantsData, cuisineData,navigateToCuisine,navigateToRestaurant)
             }
         }
 
@@ -175,7 +173,6 @@ fun TopAddressBar(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopSearchBar() {
 
@@ -188,41 +185,7 @@ fun TopSearchBar() {
             .background(color = colorResource(id = R.color.foodpanda))
             .padding(start = 16.dp, end = 10.dp, top = 10.dp, bottom = 14.dp),
     ) {
-        /*TextField(
-            value = text,
-            onValueChange = {
-                text = it
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(50.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                containerColor = Color.White,
-                cursorColor = colorResource(id = R.color.foodpanda)
-            ),
-            placeholder = {
-                Text(
-                    text = "Search for shops and restuarants",
-                    color = colorResource(R.color.light_text)
-                )
-            },
-            leadingIcon = @Composable {
-                IconButton(
-                    onClick = {
-                        text = ""
-                    },
-                ) {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = "",
-                        tint = colorResource(id = R.color.light_text)
-                    )
-                }
-            }
-        )*/
+
         BasicTextField(
             value = text,
             onValueChange = { text = it },
@@ -242,16 +205,12 @@ fun TopSearchBar() {
                     .padding(start = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // if (leadingIcon != null) leadingIcon()
                 Icon(
-                    Icons.Filled.Search, "contentDescription",
-                    modifier = Modifier
-                       // .background(color = Color.Red)
+                    Icons.Filled.Search, "contentDescription"
                         )
                 Box(
                     Modifier
                         .fillMaxWidth()
-                        //.background(color = Color.Blue)
                         .padding(start = 10.dp, end = 10.dp)
                 ) {
                     innerTextField()
@@ -263,45 +222,7 @@ fun TopSearchBar() {
                         )
                     )
                 }
-                //if (trailingIcon != null) trailingIcon()
             }
-            /*TextFieldDefaults.TextFieldDecorationBox(
-                value = text,
-                innerTextField = innerTextField,
-                enabled = true,
-                singleLine = true,
-                visualTransformation = VisualTransformation.None,
-                interactionSource = remember { MutableInteractionSource() },
-                *//*leadingIcon = {
-                    Icon(
-                        Icons.Filled.Search, "contentDescription",
-                        modifier = Modifier.clickable { *//**//* doSomething *//**//* }
-                    )
-                },*//*
-                contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                    top = 0.dp,
-                    bottom = 0.dp
-                ),
-                container = {
-                    Row(
-                        Modifier,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                       // if (leadingIcon != null) leadingIcon()
-                        Box(Modifier.weight(1f)) {
-                            if (text.isEmpty()) Text(
-                                "placeholderText",
-                                style = LocalTextStyle.current.copy(
-                                    color = colorResource(id = R.color.light_text),
-                                    fontSize = 12.sp
-                                )
-                            )
-                            innerTextField()
-                        }
-                        //if (trailingIcon != null) trailingIcon()
-                    }
-                }
-            )*/
         }
     }
 
@@ -455,7 +376,8 @@ fun CardItem(
 fun WhiteArea(
     restaurantsData: ArrayList<RestuarantItem>,
     cardItemData: ArrayList<CardItem>,
-    navigateTo: (route: String) -> Unit,
+    navigateToCuisine: (route: String) -> Unit,
+    navigateToRestaurant: (route: String) -> Unit,
 ) {
 
     Column(
@@ -474,7 +396,7 @@ fun WhiteArea(
             modifier = Modifier
                 .padding(top = 20.dp)
         )
-        OrderItAgain(restaurantsData)
+        OrderItAgain(restaurantsData, navigateToRestaurant)
         Text(
             text = "Top Brands",
             fontWeight = FontWeight.Bold,
@@ -520,7 +442,7 @@ fun WhiteArea(
             modifier = Modifier
                 .padding(top = 30.dp)
         )
-        Cuisines(data = cardItemData,navigateTo)
+        Cuisines(data = cardItemData,navigateToCuisine)
     }
 
 }
@@ -608,14 +530,15 @@ fun AdCard(){
 
 @Composable
 fun OrderItAgain(
-    list: ArrayList<RestuarantItem>
+    list: ArrayList<RestuarantItem>,
+    navigateTo: (route: String) -> Unit,
 ) {
 
         LazyHorizontalGrid(
             rows = GridCells.Fixed(1),
             content = {
                 items(list) { item ->
-                    RestaurantsCardItem(item)
+                    RestaurantsCardItem(item, navigateTo)
                 }
             },
             modifier = Modifier
@@ -626,18 +549,32 @@ fun OrderItAgain(
 }
 
 @Composable
-fun RestaurantsCardItem(restaurantItem: RestuarantItem) {
+fun RestaurantsCardItem(
+    restaurantItem: RestuarantItem,
+    navigateTo: (route: String) -> Unit,
+) {
 
     Column(
         modifier = Modifier
             // .background(color = Color.Red)
             .padding(end = 10.dp)
             .wrapContentSize()
+            .clickable(
+                indication = rememberRipple(
+                    bounded = true,
+                    color = colorResource(id = R.color.black)
+                ),
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                val json = Uri.encode(Gson().toJson(restaurantItem))
+                navigateTo.invoke(Screen.RestaurantScreen.route.plus("/${json}"))
+            }
     ) {
         Box(
             modifier = Modifier
                 //.background(color = Color.Blue)
                 .wrapContentSize()
+
         ) {
             Card(
                 modifier = Modifier.align(Alignment.TopStart)

@@ -1,5 +1,6 @@
 package com.food.foodpanda.ui.screens
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -51,6 +52,8 @@ fun CuisineScreen(
     onBackPress: () -> Unit,
     viewModel: CuisineScreenViewModel = viewModel()
 ) {
+    Log.e("TAG", "CuisineScreen")
+
 
     val restaurantsData = viewModel.getRestaurantsData()
 

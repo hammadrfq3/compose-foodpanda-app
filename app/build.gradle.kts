@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -72,5 +73,6 @@ dependencies {
     implementation("com.github.skydoves:landscapist-placeholder:2.3.3")
 
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.code.gson:gson:2.11.0")
 
 }
