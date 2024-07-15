@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.foodpanda.R
 import com.food.foodpanda.data.model.CardItem
+import com.food.foodpanda.data.model.MenuItem
+import com.food.foodpanda.data.model.RestaurantMenu
 import com.food.foodpanda.data.model.RestuarantItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,32 +14,50 @@ import kotlinx.coroutines.launch
 
 class RestaurantScreenViewModel : ViewModel() {
 
-    private val _isReady = MutableStateFlow(false)
-    val isReady = _isReady.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            delay(1500L)
-            _isReady.value = true
-        }
-    }
+    fun getRestaurantMenu(): Triple<ArrayList<RestaurantMenu>,ArrayList<MenuItem>,String>{
 
-    fun getUpperBoxData(): ArrayList<CardItem>{
+        val item1 = MenuItem("Single Nashta",R.drawable.cuisine_3, "Rs. 250.00")
+        val item2 = MenuItem("Lassi",R.drawable.lassi, "Rs. 200.00")
+        val item3 = MenuItem("Sada Chany",R.drawable.chany, "Rs. 199.00")
+        val item4 = MenuItem("Daal Mash",R.drawable.daal_mash, "Rs. 200.00")
+        val item5 = MenuItem("Aloo Paratha",R.drawable.aloo_paratha, "Rs. 160.00")
+        val item6 = MenuItem("Sada Haleem",R.drawable.haleem, "Rs. 374.00")
 
-        val cardItem1 = CardItem("Food delivery","Order food you love", R.drawable.order_food)
-        val cardItem2 = CardItem("Pandamart","Essentials delivered fast", R.drawable.pandamart)
-        val cardItem4 = CardItem("Shops","Top brands to your door", R.drawable.shop)
-        val cardItem5 = CardItem("Pandago","Send parcels in a tap", R.drawable.order_food)
-        val cardItem3 = CardItem("pick-up","Self collect for 50% off", R.drawable.order_food)
+        val list = ArrayList<MenuItem>()
+        list.add(item1)
+        list.add(item2)
+        list.add(item3)
+        list.add(item4)
+        list.add(item5)
+        list.add(item6)
 
-        val list = ArrayList<CardItem>()
-        list.add(cardItem1)
-        list.add(cardItem2)
-        list.add(cardItem4)
-        list.add(cardItem5)
-        list.add(cardItem3)
+        val popular = RestaurantMenu("Popular",list)
 
-        return list
+        val item7 = MenuItem("Single Nashta",R.drawable.cuisine_3, "Rs. 250.00")
+        val item8 = MenuItem("Puri",R.drawable.puri, "Rs. 110.00")
+        val item9 = MenuItem("Halwa",R.drawable.halwa, "Rs. 499.00")
+        val item10 = MenuItem("Beef Nihari",R.drawable.beef_nihari, "Rs. 599.00")
+        val item11 = MenuItem("Chicken Nihari",R.drawable.chicken_nihari, "Rs. 499.00")
+        val item12 = MenuItem("Murgh Chanay",R.drawable.murgh_chany, "Rs. 450.00")
+        val item13 = MenuItem("Anda Chanay",R.drawable.chany, "Rs. 270.00")
+
+        val list2 = ArrayList<MenuItem>()
+        list2.add(item7)
+        list2.add(item8)
+        list2.add(item9)
+        list2.add(item10)
+        list2.add(item11)
+        list2.add(item12)
+        list2.add(item13)
+
+        val allData = ArrayList<MenuItem>()
+        allData.addAll(list)
+        allData.addAll(list2)
+
+        val special = RestaurantMenu("Special Nashta",list2)
+
+        return Triple(arrayListOf(popular,special),allData,"")
 
     }
 

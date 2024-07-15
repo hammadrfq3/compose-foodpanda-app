@@ -10,8 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.food.foodpanda.data.model.RestuarantItem
 import com.food.foodpanda.ui.navigation.Navigation
 import com.food.foodpanda.ui.navigation.NavigationDrawer
+import com.food.foodpanda.ui.screens.RestaurantScreen
 import com.food.foodpanda.ui.theme.FoodpandaTheme
 import com.food.foodpanda.ui.viewmodel.MainScreenViewModel
 import kotlinx.coroutines.delay
@@ -52,6 +54,6 @@ fun GreetingPreview() {
     FoodpandaTheme {
         //Greeting("Android")
         //Navigation()
-        //NavigationDrawer()
+        NavigationDrawer()
     }
 }

@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="24dp" android:viewportHeight="36" android:viewportWidth="36" android:width="24dp">
+      
+    <path android:fillColor="@color/foodpanda" android:pathData="M33.16,19.13 L19.58,5.55A1.92,1.92 0,0 0,18.21 5H16.12L31.75,20.45 21.22,31.07a1.93,1.93 0,0 0,2.73 0l9.21,-9.21a1.93,1.93 0,0 0,0 -2.73Z"/>
+      
+    <path android:fillColor="@color/foodpanda" android:pathData="M7.81,11.14m-1.33,0a1.33,1.33 0,1 1,2.66 0a1.33,1.33 0,1 1,-2.66 0"/>
+      
+    <path android:fillColor="@color/foodpanda" android:pathData="M27.78,19.17 L14.2,5.58A1.92,1.92 0,0 0,12.83 5H3.61A1.93,1.93 0,0 0,1.68 6.93v9.22a1.92,1.92 0,0 0,0.57 1.36L15.84,31.1a1.93,1.93 0,0 0,2.73 0l9.21,-9.21A1.93,1.93 0,0 0,27.78 19.17ZM17.26,29.69 L3.69,16.15V7h9.1L26.37,20.48Z"/>
+      
+    <path android:fillAlpha="0" android:fillColor="@color/foodpanda" android:pathData="M0,0h36v36h-36z"/>
+    
+</vector>

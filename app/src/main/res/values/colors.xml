@@ -16,4 +16,8 @@
     <color name="rounded_light_stroke">#66A0A0A0</color>
     <color name="panda_pro">#1E024B</color>
     <color name="light_text2">#33737373</color>
+    <color name="card_light">#F7F7F7</color>
+    <color name="purple">#5A1993</color>
+    <color name="transparent_light">#F0F0F0</color>
+    <color name="divider">#99D3D3D3</color>
 </resources>
